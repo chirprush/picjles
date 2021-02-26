@@ -21,6 +21,7 @@ let drawColor = false;
 
 const BACKGROUND_COLOR = "#1d2021";
 const CELL_COLOR = "#efdfdf";
+const CURSOR_COLOR = "#61afef";
 
 const clear = (ctx, color) => {
 	ctx.fillStyle = color;
@@ -28,6 +29,11 @@ const clear = (ctx, color) => {
 }
 
 const drawRect = (ctx, x, y, w, h, color) => {
+	ctx.strokeStyle = color;
+	ctx.strokeRect(x, y, w, h);
+}
+
+const fillRect = (ctx, x, y, w, h, color) => {
 	ctx.fillStyle = color;
 	ctx.fillRect(x, y, w, h);
 }
@@ -40,9 +46,10 @@ const frame = () => {
 	pixels.forEach((row, y) => {
 		row.forEach((pixel, x) => {
 			if (mouseDown && x === Math.floor(mouseX / pixl) && y === Math.floor(mouseY / pixl)) pixels[y][x] = drawColor;
-			if (pixel) drawRect(ctx, x * pixl, y * pixl, pixl, pixl, CELL_COLOR);
+			if (pixel) fillRect(ctx, x * pixl, y * pixl, pixl, pixl, CELL_COLOR);
 		})
 	});
+	drawRect(ctx, Math.floor(mouseX / pixl) * pixl, Math.floor(mouseY / pixl) * pixl, pixl, pixl, CURSOR_COLOR);
 }
 
 (() => {
