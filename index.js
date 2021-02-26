@@ -63,6 +63,8 @@ document.addEventListener("keypress", event => {
 
 document.addEventListener("pointerdown", event => {
 	mouseDown = true;
+	mouseX = event.offsetX;
+	mouseY = event.offsetY;
 	drawColor = !getAtPos(mouseX, mouseY)
 })
 
