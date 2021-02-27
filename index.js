@@ -71,9 +71,9 @@ const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/
 const width = canvas.width;
 const height = canvas.height;
 
-const toolbarHeight = 20;
+const toolbarHeight = isMobile ? 50 : 20;
 const colorButtonLength = toolbarHeight / 2;
-const colorButtonPaddingX = 20;
+const colorButtonPaddingX = isMobile ? 50 : 20;
 const colorButtonPaddingY = (toolbarHeight - colorButtonLength) / 2;
 
 const pixl = isMobile ? 50 : 20;
