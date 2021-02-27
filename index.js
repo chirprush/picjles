@@ -18,17 +18,44 @@ class ColorButton {
 		this.color = color;
 	}
 
-	// TODO: Add rendering of ColorButtons
-	render(pos) {}
+	render(pos, selected) {
+		fillRect(ctx, pos, colorButtonLength, colorButtonLength, this.color);
+		if (selected) {
+			drawRect(ctx, pos, colorButtonLength, colorButtonLength, CURSOR_COLOR);
+		}
+	}
 }
 
 class Toolbar {
 	constructor(colorButtons) {
 		this.colorButtons = colorButtons;
+		this.selected = 1;
+		this.saveSelection = 1;
+	}
+
+	getColor(index) {
+		return this.colorButtons[index - 1].color;
 	}
 
 	render(pos) {
 		fillRect(ctx, pos, width, toolbarHeight, TOOLBAR_COLOR);
+		this.colorButtons.forEach((button, index) => 
+			button.render(
+				new Vec2(pos.x + colorButtonPaddingX * (index + 1), pos.y + colorButtonPaddingY),
+				this.selected === index + 1));
+	}
+
+	update(pos) {
+		this.colorButtons.forEach((button, index) => {
+			let buttonPos = new Vec2(pos.x + colorButtonPaddingX * (index + 1), pos.y + colorButtonPaddingY);
+			if (mouseDown &&
+				mousePos.x >= buttonPos.x &&
+				mousePos.x < buttonPos.x + colorButtonLength &&
+				mousePos.y >= buttonPos.y &&
+				mousePos.y < buttonPos.y + colorButtonLength) {
+				this.selected = index + 1;
+			}
+		})
 	}
 }
 
@@ -45,6 +72,9 @@ const width = canvas.width;
 const height = canvas.height;
 
 const toolbarHeight = 20;
+const colorButtonLength = toolbarHeight / 2;
+const colorButtonPaddingX = 20;
+const colorButtonPaddingY = (toolbarHeight - colorButtonLength) / 2;
 
 const pixl = isMobile ? 50 : 20;
 const cols = Math.floor(width / pixl);
@@ -54,9 +84,8 @@ let pixels = Array(rows).fill(0).map(_ => Array(cols).fill(0));
 
 let mousePos = new Vec2(0, 0);
 let mouseDown = false;
-let drawColor = false;
 
-const toolbar = new Toolbar([]);
+const toolbar = new Toolbar([new ColorButton("#efdfdf"), new ColorButton("#fe8019")]);
 
 const BACKGROUND_COLOR = "#1d2021";
 const TOOLBAR_COLOR = "#181b1c";
@@ -88,11 +117,12 @@ const frame = () => {
 	requestAnimationFrame(frame);
 	clear(ctx, BACKGROUND_COLOR);
 	toolbar.render(new Vec2(0, 0));
+	toolbar.update(new Vec2(0, 0));
 	let coord = mousePos.toPos();
 	pixels.forEach((row, y) => {
 		row.forEach((_, x) => {
-			if (mouseDown && x === coord.x && y === coord.y) pixels[y][x] = drawColor;
-			if (pixels[y][x]) fillRect(ctx, new Vec2(x * pixl, y * pixl + toolbarHeight), pixl, pixl, CELL_COLOR);
+			if (mouseDown && x === coord.x && y === coord.y) pixels[y][x] = toolbar.selected;
+			if (pixels[y][x] > 0) fillRect(ctx, new Vec2(x * pixl, y * pixl + toolbarHeight), pixl, pixl, toolbar.getColor(pixels[y][x]));
 		})
 	});
 	if (coord.inBounds()) {
@@ -120,10 +150,14 @@ document.addEventListener("pointerdown", event => {
 	mouseDown = true;
 	mousePos.x = event.offsetX;
 	mousePos.y = event.offsetY;
-	if (isMobile) {
-		drawColor = !getAtPos(mousePos)
-	} else {
-		drawColor = event.button === 0;
+	if (isMobile && toolbar.selected === getAtPos(mousePos)) {
+		toolbar.saveSelection = toolbar.selected ? toolbar.selected : toolbar.saveSelection;
+		toolbar.selected = 0;
+	} else if (!isMobile && event.button === 2) {
+		toolbar.saveSelection = toolbar.selected ? toolbar.selected : toolbar.saveSelection;
+		toolbar.selected = 0;
+	} else if (toolbar.selected === 0) {
+		toolbar.selected = toolbar.saveSelection;
 	}
 })
 
