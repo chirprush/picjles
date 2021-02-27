@@ -9,7 +9,7 @@ class Vec2 {
 	}
 
 	inBounds() {
-		return this.x >= 0 && this.x < cols && this.y >= 0 && this.y < rows;
+		return this.x >= 0 && this.x < pixels.cols && this.y >= 0 && this.y < pixels.rows;
 	}
 }
 
@@ -59,6 +59,39 @@ class Toolbar {
 	}
 }
 
+class Pixels {
+	constructor(cols, rows) {
+		this.cols = cols;
+		this.rows = rows;
+		this.pixels = Array(rows).fill(0).map(_ => Array(cols).fill(0));
+	}
+
+	clear() {
+		this.pixels.forEach((row, y) => {
+			row.forEach((_, x) => {
+				this.pixels[y][x] = 0;
+			})
+		});
+	}
+
+	render(pos) {
+		this.pixels.forEach((row, y) => {
+			row.forEach((_, x) => {
+				if (this.pixels[y][x] > 0) fillRect(ctx, new Vec2(x * pixl + pos.x, y * pixl + pos.y), pixl, pixl, toolbar.getColor(this.pixels[y][x]));
+			})
+		});
+		let coord = mousePos.toPos();
+		if (coord.inBounds()) drawRect(ctx, new Vec2(coord.x * pixl, coord.y * pixl + toolbarHeight), pixl, pixl, CURSOR_COLOR);
+	}
+
+	update(pos) {
+		let coord = mousePos.toPos();
+		if (mouseDown && coord.inBounds()) {
+			this.pixels[coord.y][coord.x] = toolbar.selected;
+		}
+	}
+}
+
 let canvas = document.getElementById("canvas");
 
 canvas.width = window.innerWidth;
@@ -80,7 +113,7 @@ const pixl = isMobile ? 50 : 20;
 const cols = Math.floor(width / pixl);
 const rows = Math.floor(height / pixl);
 
-let pixels = Array(rows).fill(0).map(_ => Array(cols).fill(0));
+let pixels = new Pixels(cols, rows);
 
 let mousePos = new Vec2(0, 0);
 let mouseDown = false;
@@ -120,16 +153,8 @@ const frame = () => {
 	clear(ctx, BACKGROUND_COLOR);
 	toolbar.render(new Vec2(0, 0));
 	toolbar.update(new Vec2(0, 0));
-	let coord = mousePos.toPos();
-	pixels.forEach((row, y) => {
-		row.forEach((_, x) => {
-			if (mouseDown && x === coord.x && y === coord.y) pixels[y][x] = toolbar.selected;
-			if (pixels[y][x] > 0) fillRect(ctx, new Vec2(x * pixl, y * pixl + toolbarHeight), pixl, pixl, toolbar.getColor(pixels[y][x]));
-		})
-	});
-	if (coord.inBounds()) {
-		drawRect(ctx, new Vec2(coord.x * pixl, coord.y * pixl + toolbarHeight), pixl, pixl, CURSOR_COLOR);
-	}
+	pixels.render(new Vec2(0, toolbarHeight));
+	pixels.update(new Vec2(0, toolbarHeight));
 }
 
 (() => {
@@ -139,11 +164,7 @@ const frame = () => {
 document.addEventListener("keypress", event => {
 	switch (event.key) {
 		case "c":
-			pixels.forEach((row, y) => {
-				row.forEach((_, x) => {
-					pixels[y][x] = 0;
-				})
-			})
+			pixels.clear();
 			break;
 	}
 })
