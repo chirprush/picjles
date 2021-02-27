@@ -5,3 +5,5 @@
 ## What is it?
 
 Just having some fun using the Javascript canvas and programming in a functional style. I mostly plan on doing things related to pixels and/or pixel art drawings.
+
+You can try it out for yourself [here](https://chirprush.github.io/picjles/).
