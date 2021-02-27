@@ -6,6 +6,7 @@
 
 Just having some fun using the Javascript canvas and programming in a functional style. I mostly plan on doing things related to pixels and/or pixel art drawings.
 
+<<<<<<< HEAD
 ## How do I use it?
 
 ### Desktop Users
@@ -23,3 +24,6 @@ Just having some fun using the Javascript canvas and programming in a functional
 ## Does it have X feature?
 
 If the feature isn't listed above, it probably has not been implemented yet. If you would like to see it added to this, though, feel free to submit an issue (no promises, obviously)!
+=======
+You can try it out for yourself [here](https://chirprush.github.io/picjles/).
+>>>>>>> 3a0012722231966edfe79926cd2a0a5c2aa17148
