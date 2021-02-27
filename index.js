@@ -1,3 +1,14 @@
+class Vec2 {
+	constructor(x, y) {
+		this.x = x;
+		this.y = y;
+	}
+
+	toPos(pos) {
+		return new Vec2(Math.floor(this.x / pixl), Math.floor(this.y / pixl));
+	}
+}
+
 let canvas = document.getElementById("canvas");
 
 canvas.width = window.innerWidth;
@@ -16,8 +27,7 @@ const rows = Math.floor(height / pixl);
 
 let pixels = Array(rows).fill(0).map(_ => Array(cols).fill(0));
 
-let mouseX = 0;
-let mouseY = 0;
+let mousePos = new Vec2(0, 0);
 let mouseDown = false;
 let drawColor = false;
 
@@ -30,28 +40,33 @@ const clear = (ctx, color) => {
 	ctx.fillRect(0, 0, width, height);
 }
 
-const drawRect = (ctx, x, y, w, h, color) => {
+const drawRect = (ctx, pos, w, h, color) => {
 	ctx.strokeStyle = color;
-	ctx.strokeRect(x, y, w, h);
+	ctx.strokeRect(pos.x, pos.y, w, h);
 }
 
-const fillRect = (ctx, x, y, w, h, color) => {
+const fillRect = (ctx, pos, w, h, color) => {
 	ctx.fillStyle = color;
-	ctx.fillRect(x, y, w, h);
+	ctx.fillRect(pos.x, pos.y, w, h);
 }
 
-const getAtPos = (x, y) => pixels[Math.floor(y / pixl)][Math.floor(x / pixl)];
+
+const getAtPos = pos => {
+	let coord = pos.toPos();
+	return pixels[coord.y][coord.x];
+};
 
 const frame = () => {
 	requestAnimationFrame(frame);
 	clear(ctx, BACKGROUND_COLOR);
+	let coord = mousePos.toPos();
 	pixels.forEach((row, y) => {
-		row.forEach((pixel, x) => {
-			if (mouseDown && x === Math.floor(mouseX / pixl) && y === Math.floor(mouseY / pixl)) pixels[y][x] = drawColor;
-			if (pixel) fillRect(ctx, x * pixl, y * pixl, pixl, pixl, CELL_COLOR);
+		row.forEach((_, x) => {
+			if (mouseDown && x === coord.x && y === coord.y) pixels[y][x] = drawColor;
+			if (pixels[y][x]) fillRect(ctx, new Vec2(x * pixl, y * pixl), pixl, pixl, CELL_COLOR);
 		})
 	});
-	drawRect(ctx, Math.floor(mouseX / pixl) * pixl, Math.floor(mouseY / pixl) * pixl, pixl, pixl, CURSOR_COLOR);
+	drawRect(ctx, new Vec2(coord.x * pixl, coord.y * pixl), pixl, pixl, CURSOR_COLOR);
 }
 
 (() => {
@@ -72,9 +87,9 @@ document.addEventListener("keypress", event => {
 
 document.addEventListener("pointerdown", event => {
 	mouseDown = true;
-	mouseX = event.offsetX;
-	mouseY = event.offsetY;
-	drawColor = !getAtPos(mouseX, mouseY)
+	mousePos.x = event.offsetX;
+	mousePos.y = event.offsetY;
+	drawColor = !getAtPos(mousePos)
 })
 
 document.addEventListener("pointerup", event => {
@@ -82,6 +97,6 @@ document.addEventListener("pointerup", event => {
 })
 
 document.addEventListener("pointermove", event => {
-	mouseX = event.offsetX;
-	mouseY = event.offsetY;
+	mousePos.x = event.offsetX;
+	mousePos.y = event.offsetY;
 })
