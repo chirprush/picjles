@@ -140,7 +140,15 @@ const pixels = new Pixels(cols, rows);
 let mousePos = new Vec2(0, 0);
 let mouseDown = false;
 
-const toolbar = new Toolbar([new ColorButton("#efdfdf"), new ColorButton("#fe8019")]);
+const toolbar = new Toolbar([
+	new ColorButton("#efdfdf"), // White
+	new ColorButton("#fb4944"), // Red
+	new ColorButton("#fe8019"), // Orange
+	new ColorButton("#fabd2f"), // Yellow
+	new ColorButton("#94b413"), // Green
+	new ColorButton("#331dab"), // Blue
+	new ColorButton("#4e3670"), // Purple
+]);
 
 const BACKGROUND_COLOR = "#1d2021";
 const TOOLBAR_COLOR = "#181b1c";
