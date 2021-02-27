@@ -13,6 +13,25 @@ class Vec2 {
 	}
 }
 
+class ColorButton {
+	constructor(color) {
+		this.color = color;
+	}
+
+	// TODO: Add rendering of ColorButtons
+	render(pos) {}
+}
+
+class Toolbar {
+	constructor(colorButtons) {
+		this.colorButtons = colorButtons;
+	}
+
+	render(pos) {
+		fillRect(ctx, pos, width, toolbarHeight, TOOLBAR_COLOR);
+	}
+}
+
 let canvas = document.getElementById("canvas");
 
 canvas.width = window.innerWidth;
@@ -36,6 +55,8 @@ let pixels = Array(rows).fill(0).map(_ => Array(cols).fill(0));
 let mousePos = new Vec2(0, 0);
 let mouseDown = false;
 let drawColor = false;
+
+const toolbar = new Toolbar([]);
 
 const BACKGROUND_COLOR = "#1d2021";
 const TOOLBAR_COLOR = "#181b1c";
@@ -66,7 +87,7 @@ const getAtPos = pos => {
 const frame = () => {
 	requestAnimationFrame(frame);
 	clear(ctx, BACKGROUND_COLOR);
-	fillRect(ctx, new Vec2(0, 0), width, toolbarHeight, TOOLBAR_COLOR);
+	toolbar.render(new Vec2(0, 0));
 	let coord = mousePos.toPos();
 	pixels.forEach((row, y) => {
 		row.forEach((_, x) => {
