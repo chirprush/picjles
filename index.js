@@ -152,7 +152,7 @@ document.addEventListener("pointerdown", event => {
 	mouseDown = true;
 	mousePos.x = event.offsetX;
 	mousePos.y = event.offsetY;
-	if (isMobile && toolbar.selected === getAtPos(mousePos)) {
+	if (isMobile && toolbar.selected === getAtPos(mousePos) && toolbar.selected > 0) {
 		toolbar.saveSelection = toolbar.selected ? toolbar.selected : toolbar.saveSelection;
 		toolbar.selected = 0;
 	} else if (!isMobile && event.button === 2) {
