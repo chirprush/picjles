@@ -74,6 +74,14 @@ class Pixels {
 		});
 	}
 
+	getAt(pos) {
+		let coord = pos.toPos();
+		if (!coord.inBounds()) {
+			return -1;
+		}
+		return this.pixels[coord.y][coord.x];
+	}
+
 	render(pos) {
 		this.pixels.forEach((row, y) => {
 			row.forEach((_, x) => {
@@ -140,14 +148,6 @@ const fillRect = (ctx, pos, w, h, color) => {
 }
 
 
-const getAtPos = pos => {
-	let coord = pos.toPos();
-	if (!coord.inBounds()) {
-		return -1;
-	}
-	return pixels[coord.y][coord.x];
-};
-
 const frame = () => {
 	requestAnimationFrame(frame);
 	clear(ctx, BACKGROUND_COLOR);
@@ -173,7 +173,7 @@ document.addEventListener("pointerdown", event => {
 	mouseDown = true;
 	mousePos.x = event.offsetX;
 	mousePos.y = event.offsetY;
-	if (isMobile && toolbar.selected === getAtPos(mousePos) && toolbar.selected > 0) {
+	if (isMobile && toolbar.selected === pixels.getAt(mousePos) && toolbar.selected > 0) {
 		toolbar.saveSelection = toolbar.selected ? toolbar.selected : toolbar.saveSelection;
 		toolbar.selected = 0;
 	} else if (!isMobile && event.button === 2) {
