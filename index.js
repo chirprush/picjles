@@ -89,7 +89,11 @@ document.addEventListener("pointerdown", event => {
 	mouseDown = true;
 	mousePos.x = event.offsetX;
 	mousePos.y = event.offsetY;
-	drawColor = !getAtPos(mousePos)
+	if (isMobile) {
+		drawColor = !getAtPos(mousePos)
+	} else {
+		drawColor = event.button === 0;
+	}
 })
 
 document.addEventListener("pointerup", event => {
@@ -100,3 +104,5 @@ document.addEventListener("pointermove", event => {
 	mousePos.x = event.offsetX;
 	mousePos.y = event.offsetY;
 })
+
+window.addEventListener("contextmenu", e => e.preventDefault());
