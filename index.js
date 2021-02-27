@@ -5,10 +5,12 @@ canvas.height = window.innerHeight;
 
 let ctx = canvas.getContext("2d");
 
+const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+
 const width = canvas.width;
 const height = canvas.height;
 
-const pixl = 20;
+const pixl = isMobile ? 50 : 20;
 const cols = Math.floor(width / pixl);
 const rows = Math.floor(height / pixl);
 
