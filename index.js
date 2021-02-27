@@ -5,7 +5,7 @@ class Vec2 {
 	}
 
 	toPos(pos) {
-		return new Vec2(Math.floor(this.x / pixl), Math.floor((this.y - toolbarHeight) / pixl));
+		return new Vec2(Math.floor(this.x / Pixels.pixl), Math.floor((this.y - Toolbar.height) / Pixels.pixl));
 	}
 
 	inBounds() {
@@ -18,10 +18,22 @@ class ColorButton {
 		this.color = color;
 	}
 
+	static get length() {
+		return Toolbar.height / 2;
+	}
+
+	static get paddingX() {
+		return isMobile ? 100 : 20;
+	}
+
+	static get paddingY() {
+		return (Toolbar.height - ColorButton.length) / 2;
+	}
+
 	render(pos, selected) {
-		fillRect(ctx, pos, colorButtonLength, colorButtonLength, this.color);
+		fillRect(ctx, pos, ColorButton.length, ColorButton.length, this.color);
 		if (selected) {
-			drawRect(ctx, pos, colorButtonLength, colorButtonLength, CURSOR_COLOR);
+			drawRect(ctx, pos, ColorButton.length, ColorButton.length, CURSOR_COLOR);
 		}
 	}
 }
@@ -33,26 +45,30 @@ class Toolbar {
 		this.saveSelection = 1;
 	}
 
+	static get height() {
+		return isMobile ? 100 : 20;
+	}
+
 	getColor(index) {
 		return this.colorButtons[index - 1].color;
 	}
 
 	render(pos) {
-		fillRect(ctx, pos, width, toolbarHeight, TOOLBAR_COLOR);
+		fillRect(ctx, pos, width, Toolbar.height, TOOLBAR_COLOR);
 		this.colorButtons.forEach((button, index) => 
 			button.render(
-				new Vec2(pos.x + colorButtonPaddingX * (index + 1), pos.y + colorButtonPaddingY),
+				new Vec2(pos.x + ColorButton.paddingX * (index + 1), pos.y + ColorButton.paddingY),
 				this.selected === index + 1));
 	}
 
 	update(pos) {
 		this.colorButtons.forEach((button, index) => {
-			let buttonPos = new Vec2(pos.x + colorButtonPaddingX * (index + 1), pos.y + colorButtonPaddingY);
+			let buttonPos = new Vec2(pos.x + ColorButton.paddingX * (index + 1), pos.y + ColorButton.paddingY);
 			if (mouseDown &&
 				mousePos.x >= buttonPos.x &&
-				mousePos.x < buttonPos.x + colorButtonLength &&
+				mousePos.x < buttonPos.x + ColorButton.length &&
 				mousePos.y >= buttonPos.y &&
-				mousePos.y < buttonPos.y + colorButtonLength) {
+				mousePos.y < buttonPos.y + ColorButton.length) {
 				this.selected = index + 1;
 			}
 		})
@@ -64,6 +80,10 @@ class Pixels {
 		this.cols = cols;
 		this.rows = rows;
 		this.pixels = Array(rows).fill(0).map(_ => Array(cols).fill(0));
+	}
+
+	static get pixl() {
+		return isMobile ? 50 : 20;
 	}
 
 	clear() {
@@ -85,11 +105,11 @@ class Pixels {
 	render(pos) {
 		this.pixels.forEach((row, y) => {
 			row.forEach((_, x) => {
-				if (this.pixels[y][x] > 0) fillRect(ctx, new Vec2(x * pixl + pos.x, y * pixl + pos.y), pixl, pixl, toolbar.getColor(this.pixels[y][x]));
+				if (this.pixels[y][x] > 0) fillRect(ctx, new Vec2(x * Pixels.pixl + pos.x, y * Pixels.pixl + pos.y), Pixels.pixl, Pixels.pixl, toolbar.getColor(this.pixels[y][x]));
 			})
 		});
 		let coord = mousePos.toPos();
-		if (coord.inBounds()) drawRect(ctx, new Vec2(coord.x * pixl, coord.y * pixl + toolbarHeight), pixl, pixl, CURSOR_COLOR);
+		if (coord.inBounds()) drawRect(ctx, new Vec2(coord.x * Pixels.pixl, coord.y * Pixels.pixl + Toolbar.height), Pixels.pixl, Pixels.pixl, CURSOR_COLOR);
 	}
 
 	update(pos) {
@@ -105,23 +125,17 @@ let canvas = document.getElementById("canvas");
 canvas.width = window.innerWidth;
 canvas.height = window.innerHeight;
 
-let ctx = canvas.getContext("2d");
+const ctx = canvas.getContext("2d");
 
 const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
 const width = canvas.width;
 const height = canvas.height;
 
-const toolbarHeight = isMobile ? 100 : 20;
-const colorButtonLength = toolbarHeight / 2;
-const colorButtonPaddingX = isMobile ? 100 : 20;
-const colorButtonPaddingY = (toolbarHeight - colorButtonLength) / 2;
+const cols = Math.floor(width / Pixels.pixl);
+const rows = Math.floor(height / Pixels.pixl);
 
-const pixl = isMobile ? 50 : 20;
-const cols = Math.floor(width / pixl);
-const rows = Math.floor(height / pixl);
-
-let pixels = new Pixels(cols, rows);
+const pixels = new Pixels(cols, rows);
 
 let mousePos = new Vec2(0, 0);
 let mouseDown = false;
@@ -153,8 +167,8 @@ const frame = () => {
 	clear(ctx, BACKGROUND_COLOR);
 	toolbar.render(new Vec2(0, 0));
 	toolbar.update(new Vec2(0, 0));
-	pixels.render(new Vec2(0, toolbarHeight));
-	pixels.update(new Vec2(0, toolbarHeight));
+	pixels.render(new Vec2(0, Toolbar.height));
+	pixels.update(new Vec2(0, Toolbar.height));
 }
 
 (() => {
