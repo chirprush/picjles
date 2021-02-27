@@ -71,9 +71,9 @@ const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/
 const width = canvas.width;
 const height = canvas.height;
 
-const toolbarHeight = isMobile ? 50 : 20;
+const toolbarHeight = isMobile ? 100 : 20;
 const colorButtonLength = toolbarHeight / 2;
-const colorButtonPaddingX = isMobile ? 50 : 20;
+const colorButtonPaddingX = isMobile ? 100 : 20;
 const colorButtonPaddingY = (toolbarHeight - colorButtonLength) / 2;
 
 const pixl = isMobile ? 50 : 20;
@@ -89,7 +89,6 @@ const toolbar = new Toolbar([new ColorButton("#efdfdf"), new ColorButton("#fe801
 
 const BACKGROUND_COLOR = "#1d2021";
 const TOOLBAR_COLOR = "#181b1c";
-const CELL_COLOR = "#efdfdf";
 const CURSOR_COLOR = "#61afef";
 
 const clear = (ctx, color) => {
@@ -110,6 +109,9 @@ const fillRect = (ctx, pos, w, h, color) => {
 
 const getAtPos = pos => {
 	let coord = pos.toPos();
+	if (!coord.inBounds()) {
+		return -1;
+	}
 	return pixels[coord.y][coord.x];
 };
 
