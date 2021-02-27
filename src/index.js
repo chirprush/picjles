@@ -1,17 +1,9 @@
-class Vec2 {
-	constructor(x, y) {
-		this.x = x;
-		this.y = y;
-	}
+import { Vec2 } from "./lib/vec.js";
+import { clear, fillRect, drawRect } from "./lib/draw.js";
 
-	toPos(pos) {
-		return new Vec2(Math.floor(this.x / Pixels.pixl), Math.floor((this.y - Toolbar.height) / Pixels.pixl));
-	}
+const vecToPos = (v) => new Vec2(Math.floor(v.x / Pixels.pixl), Math.floor((v.y - Toolbar.height) / Pixels.pixl));
 
-	inBounds() {
-		return this.x >= 0 && this.x < pixels.cols && this.y >= 0 && this.y < pixels.rows;
-	}
-}
+const vecInBounds = (v) => v.x >= 0 && v.x < pixels.cols && v.y >= 0 && v.y < pixels.rows;
 
 class ColorButton {
 	constructor(color) {
@@ -86,17 +78,18 @@ class Pixels {
 		return isMobile ? 50 : 20;
 	}
 
-	clear() {
+	clear(value) {
+		let v = value ? value : 0;
 		this.pixels.forEach((row, y) => {
 			row.forEach((_, x) => {
-				this.pixels[y][x] = 0;
+				this.pixels[y][x] = value;
 			})
 		});
 	}
 
 	getAt(pos) {
-		let coord = pos.toPos();
-		if (!coord.inBounds()) {
+		let coord = vecToPos(pos);
+		if (!vecInBounds(coord)) {
 			return -1;
 		}
 		return this.pixels[coord.y][coord.x];
@@ -108,13 +101,13 @@ class Pixels {
 				if (this.pixels[y][x] > 0) fillRect(ctx, new Vec2(x * Pixels.pixl + pos.x, y * Pixels.pixl + pos.y), Pixels.pixl, Pixels.pixl, toolbar.getColor(this.pixels[y][x]));
 			})
 		});
-		let coord = mousePos.toPos();
-		if (coord.inBounds()) drawRect(ctx, new Vec2(coord.x * Pixels.pixl, coord.y * Pixels.pixl + Toolbar.height), Pixels.pixl, Pixels.pixl, CURSOR_COLOR);
+		let coord = vecToPos(mousePos);
+		if (vecInBounds(coord)) drawRect(ctx, new Vec2(coord.x * Pixels.pixl, coord.y * Pixels.pixl + Toolbar.height), Pixels.pixl, Pixels.pixl, CURSOR_COLOR);
 	}
 
 	update(pos) {
-		let coord = mousePos.toPos();
-		if (mouseDown && coord.inBounds()) {
+		let coord = vecToPos(mousePos);
+		if (mouseDown && vecInBounds(coord)) {
 			this.pixels[coord.y][coord.x] = toolbar.selected;
 		}
 	}
@@ -153,22 +146,6 @@ const toolbar = new Toolbar([
 const BACKGROUND_COLOR = "#1d2021";
 const TOOLBAR_COLOR = "#181b1c";
 const CURSOR_COLOR = "#61afef";
-
-const clear = (ctx, color) => {
-	ctx.fillStyle = color;
-	ctx.fillRect(0, 0, width, height);
-}
-
-const drawRect = (ctx, pos, w, h, color) => {
-	ctx.strokeStyle = color;
-	ctx.strokeRect(pos.x, pos.y, w, h);
-}
-
-const fillRect = (ctx, pos, w, h, color) => {
-	ctx.fillStyle = color;
-	ctx.fillRect(pos.x, pos.y, w, h);
-}
-
 
 const frame = () => {
 	requestAnimationFrame(frame);
