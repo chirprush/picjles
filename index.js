@@ -5,7 +5,11 @@ class Vec2 {
 	}
 
 	toPos(pos) {
-		return new Vec2(Math.floor(this.x / pixl), Math.floor(this.y / pixl));
+		return new Vec2(Math.floor(this.x / pixl), Math.floor((this.y - toolbarHeight) / pixl));
+	}
+
+	inBounds() {
+		return this.x >= 0 && this.x < cols && this.y >= 0 && this.y < rows;
 	}
 }
 
@@ -21,6 +25,8 @@ const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/
 const width = canvas.width;
 const height = canvas.height;
 
+const toolbarHeight = 20;
+
 const pixl = isMobile ? 50 : 20;
 const cols = Math.floor(width / pixl);
 const rows = Math.floor(height / pixl);
@@ -32,6 +38,7 @@ let mouseDown = false;
 let drawColor = false;
 
 const BACKGROUND_COLOR = "#1d2021";
+const TOOLBAR_COLOR = "#181b1c";
 const CELL_COLOR = "#efdfdf";
 const CURSOR_COLOR = "#61afef";
 
@@ -59,14 +66,17 @@ const getAtPos = pos => {
 const frame = () => {
 	requestAnimationFrame(frame);
 	clear(ctx, BACKGROUND_COLOR);
+	fillRect(ctx, new Vec2(0, 0), width, toolbarHeight, TOOLBAR_COLOR);
 	let coord = mousePos.toPos();
 	pixels.forEach((row, y) => {
 		row.forEach((_, x) => {
 			if (mouseDown && x === coord.x && y === coord.y) pixels[y][x] = drawColor;
-			if (pixels[y][x]) fillRect(ctx, new Vec2(x * pixl, y * pixl), pixl, pixl, CELL_COLOR);
+			if (pixels[y][x]) fillRect(ctx, new Vec2(x * pixl, y * pixl + toolbarHeight), pixl, pixl, CELL_COLOR);
 		})
 	});
-	drawRect(ctx, new Vec2(coord.x * pixl, coord.y * pixl), pixl, pixl, CURSOR_COLOR);
+	if (coord.inBounds()) {
+		drawRect(ctx, new Vec2(coord.x * pixl, coord.y * pixl + toolbarHeight), pixl, pixl, CURSOR_COLOR);
+	}
 }
 
 (() => {
