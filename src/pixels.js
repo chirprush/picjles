@@ -74,7 +74,7 @@ class Pixels {
 
 	mouseDown(ctx, button, pos, toolbar) {
 		if (button == 1) {
-			toolbar.selected = toolbar.saveSelection;
+			toolbar.selected = toolbar.selected || toolbar.saveSelection;
 			if (this.rectStart === null) {
 				this.rectStart = this.toCoord(pos, new Vec2(0, 0));
 			} else {
