@@ -13,7 +13,9 @@ You can try out a live demo [here](https://chirprush.github.io/picjles/)!
 ### Desktop User Controls
 - Hold or tap the left mouse button to draw in the selected color
 - Hold or tap the right mouse button to erase
+- Press the middle mouse button twice to draw a rectangle of the selected color between the two points
 - Press the `c` key to clear the screen
+- Press the `g` key to toggle showing a grid on the screen
 - To switch colors, simply click one of them in the toolbar (the dark bar on the top of the screen)
 - Right click on any color button in the toolbar to fill the screen with that color. Note that the background color does not change when filling with a color
 
