@@ -81,7 +81,7 @@ class Pixels {
 				this.fill(this.rectStart, this.toCoord(pos, new Vec2(0, 0)), toolbar.selected);
 				this.rectStart = null;
 			}
-		} else if (isMobile && toolbar.selected === this.getAt(pos, new Vec(0, 0)) && toolbar.selected > 0) {
+		} else if (isMobile && toolbar.selected === this.getAt(pos, new Vec2(0, 0)) && toolbar.selected > 0) {
 			toolbar.saveSelection = toolbar.selected ? toolbar.selected : toolbar.saveSelection;
 			toolbar.selected = 0;
 		} else if (!isMobile && button == 2) {
