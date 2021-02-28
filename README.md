@@ -15,6 +15,7 @@ You can try out a live demo [here](https://chirprush.github.io/picjles/)!
 - Hold or tap the right mouse button to erase
 - Press the `c` key to clear the screen
 - To switch colors, simply click one of them in the toolbar (the dark bar on the top of the screen)
+- Right click on any color button in the toolbar to fill the screen with that color. Note that the background color does not change when filling with a color
 
 ### Mobile User Controls
 - Drag or tap your finger to draw in the selected color
