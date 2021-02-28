@@ -31,7 +31,6 @@ const frame = () => {
 	requestAnimationFrame(frame);
 	ctx.clear(BACKGROUND_COLOR);
 	toolbar.render(ctx, new Vec2(0, 0));
-	toolbar.update(ctx, new Vec2(0, 0));
 	pixels.render(ctx, new Vec2(0, Toolbar.height), toolbar);
 	pixels.update(ctx, new Vec2(0, Toolbar.height), toolbar);
 }
@@ -49,27 +48,21 @@ document.addEventListener("keypress", event => {
 })
 
 document.addEventListener("pointerdown", event => {
-	ctx.mouseDown = true;
-	ctx.mousePos.x = event.offsetX;
-	ctx.mousePos.y = event.offsetY;
-	if (isMobile && toolbar.selected === pixels.getAt(ctx.mousePos, new Vec(0, Toolbar.height)) && toolbar.selected > 0) {
-		toolbar.saveSelection = toolbar.selected ? toolbar.selected : toolbar.saveSelection;
-		toolbar.selected = 0;
-	} else if (!isMobile && event.button === 2) {
-		toolbar.saveSelection = toolbar.selected ? toolbar.selected : toolbar.saveSelection;
-		toolbar.selected = 0;
-	} else if (toolbar.selected === 0) {
-		toolbar.selected = toolbar.saveSelection;
+	ctx.mouseDown(event.button);
+	ctx.mouseMove(new Vec2(event.offsetX, event.offsetY));
+	if (pixels.touching(ctx, ctx.mousePos, new Vec2(0, Toolbar.height))) {
+		pixels.mouseDown(ctx, event.button, new Vec2(ctx.mousePos.x, ctx.mousePos.y - Toolbar.height), toolbar);
+	} else if (toolbar.touching(ctx, ctx.mousePos, new Vec2(0, 0))) {
+		toolbar.mouseDown(ctx, event.button, ctx.mousePos, pixels);
 	}
 })
 
 document.addEventListener("pointerup", event => {
-	ctx.mouseDown = false;
+	ctx.mouseUp(event.button);
 })
 
 document.addEventListener("pointermove", event => {
-	ctx.mousePos.x = event.offsetX;
-	ctx.mousePos.y = event.offsetY;
+	ctx.mouseMove(new Vec2(event.offsetX, event.offsetY));
 })
 
 window.addEventListener("contextmenu", e => e.preventDefault());

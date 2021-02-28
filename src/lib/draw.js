@@ -8,8 +8,24 @@ class Context {
 		canvas.width = width;
 		canvas.height = height;
 		this.ctx = canvas.getContext("2d");
-		this.mouseDown = false;
+		this.mouseButtons = new Set();
 		this.mousePos = new Vec2(0, 0);
+	}
+
+	mouseDown(button) {
+		this.mouseButtons.add(button);
+	}
+
+	mouseUp(button) {
+		this.mouseButtons.delete(button);
+	}
+
+	mousePressed(button) {
+		return this.mouseButtons.has(button);
+	}
+
+	mouseMove(pos) {
+		this.mousePos = pos;
 	}
 
 	clear(color) {

@@ -16,8 +16,15 @@ class Pixels {
 		return new Vec2(Math.floor((pos.x - offset.x) / Pixels.pixl), Math.floor((pos.y - offset.y) / Pixels.pixl));
 	}
 
-	inBounds(pos) {
-		return pos.x >= 0 && pos.x < this.cols && pos.y >= 0 && pos.y < this.rows;
+	inBounds(coord) {
+		return coord.x >= 0 && coord.x < this.cols && coord.y >= 0 && coord.y < this.rows;
+	}
+
+	touching(ctx, pos, offset) {
+		return pos.x >= offset.x &&
+			pos.x < ctx.width &&
+			pos.y >= offset.y &&
+			pos.y < ctx.height;
 	}
 
 	clear(value) {
@@ -47,9 +54,21 @@ class Pixels {
 		if (this.inBounds(coord)) ctx.drawRect(new Vec2(coord.x * Pixels.pixl + pos.x, coord.y * Pixels.pixl + pos.y), Pixels.pixl, Pixels.pixl, CURSOR_COLOR);
 	}
 
+	mouseDown(ctx, button, pos, toolbar) {
+		if (isMobile && toolbar.selected === this.getAt(pos, new Vec(0, 0)) && toolbar.selected > 0) {
+			toolbar.saveSelection = toolbar.selected ? toolbar.selected : toolbar.saveSelection;
+			toolbar.selected = 0;
+		} else if (!isMobile && button == 2) {
+			toolbar.saveSelection = toolbar.selected ? toolbar.selected : toolbar.saveSelection;
+			toolbar.selected = 0;
+		} else if (toolbar.selected === 0) {
+			toolbar.selected = toolbar.saveSelection;
+		}
+	}
+
 	update(ctx, pos, toolbar) {
 		let coord = this.toCoord(ctx.mousePos, pos);
-		if (ctx.mouseDown && this.inBounds(coord)) {
+		if ((ctx.mousePressed(0) || ctx.mousePressed(2)) && this.inBounds(coord)) {
 			this.pixels[coord.y][coord.x] = toolbar.selected;
 		}
 	}

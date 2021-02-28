@@ -41,6 +41,13 @@ class Toolbar {
 		return this.colorButtons[index - 1].color;
 	}
 
+	touching(ctx, pos, offset) {
+		return pos.x >= offset.x &&
+			pos.x < ctx.width &&
+			pos.y >= offset.y &&
+			pos.y < ctx.height;
+	}
+
 	render(ctx, pos) {
 		ctx.fillRect(pos, ctx.width, Toolbar.height, TOOLBAR_COLOR);
 		this.colorButtons.forEach((button, index) => 
@@ -50,17 +57,20 @@ class Toolbar {
 				this.selected === index + 1));
 	}
 
-	update(ctx, pos) {
-		this.colorButtons.forEach((button, index) => {
-			let buttonPos = new Vec2(pos.x + ColorButton.paddingX * (index + 1), pos.y + ColorButton.paddingY);
-			if (ctx.mouseDown &&
-				ctx.mousePos.x >= buttonPos.x &&
-				ctx.mousePos.x < buttonPos.x + ColorButton.length &&
-				ctx.mousePos.y >= buttonPos.y &&
-				ctx.mousePos.y < buttonPos.y + ColorButton.length) {
-				this.selected = index + 1;
+	mouseDown(ctx, button, pos, pixels) {
+		this.colorButtons.forEach((_, index) => {
+			let buttonPos = new Vec2(ColorButton.paddingX * (index + 1), ColorButton.paddingY);
+			if (pos.x >= buttonPos.x &&
+				pos.x < buttonPos.x + ColorButton.length &&
+				pos.y >= buttonPos.y &&
+				pos.y < buttonPos.y + ColorButton.length) {
+				if (button === 0) {
+					this.selected = index + 1;
+				} else if (button === 2) {
+					pixels.clear(index + 1);
+				}
 			}
-		})
+		});
 	}
 }
 
