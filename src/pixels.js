@@ -7,6 +7,7 @@ class Pixels {
 		this.rows = rows;
 		this.pixels = Array(rows).fill(0).map(_ => Array(cols).fill(0));
 		this.rectStart = null;
+		this.showGrid = false;
 	}
 
 	static get pixl() {
@@ -37,6 +38,10 @@ class Pixels {
 		});
 	}
 
+	toggleGrid() {
+		this.showGrid = !this.showGrid;
+	}
+
 	fill(start, end, value) {
 		let min = new Vec2(Math.min(start.x, end.x), Math.min(start.y, end.y));
 		let max = new Vec2(Math.max(start.x, end.x), Math.max(start.y, end.y));
@@ -59,6 +64,7 @@ class Pixels {
 		this.pixels.forEach((row, y) => {
 			row.forEach((_, x) => {
 				if (this.pixels[y][x] > 0) ctx.fillRect(new Vec2(x * Pixels.pixl + pos.x, y * Pixels.pixl + pos.y), Pixels.pixl, Pixels.pixl, toolbar.getColor(this.pixels[y][x]));
+				if (this.showGrid) ctx.drawRect(new Vec2(x * Pixels.pixl + pos.x, y * Pixels.pixl + pos.y), Pixels.pixl, Pixels.pixl, GRID_COLOR);
 			})
 		});
 		let coord = this.toCoord(ctx.mousePos, pos);
@@ -94,6 +100,7 @@ class Pixels {
 }
 
 const BACKGROUND_COLOR = "#1d2021";
+const GRID_COLOR = "#6d7071";
 const CURSOR_COLOR = "#61afef";
 const RECT_COLOR = "#98c379";
 

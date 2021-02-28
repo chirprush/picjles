@@ -44,6 +44,9 @@ document.addEventListener("keypress", event => {
 		case "c":
 			pixels.clear();
 			break;
+		case "g":
+			pixels.toggleGrid();
+			break;
 	}
 })
 
